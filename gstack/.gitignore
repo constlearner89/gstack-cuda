@@ -12,3 +12,5 @@ bun.lock
 .env.local
 .env.*
 !.env.example
+
+.agents/
