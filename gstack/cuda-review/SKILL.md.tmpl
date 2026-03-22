@@ -1,0 +1,90 @@
+---
+name: cuda-review
+version: 1.0.0
+description: |
+  Pre-landing review for CUDA/C++ numerical code. Prioritizes wrong physics,
+  memory safety, silent numerical corruption, convergence regressions, and
+  performance cliffs. Use when asked for code review or diff review.
+allowed-tools:
+  - Bash
+  - Read
+  - Edit
+  - Write
+  - Grep
+  - Glob
+  - Agent
+  - AskUserQuestion
+  - WebSearch
+---
+
+## Preamble (run first)
+
+```bash
+_UPD=$(~/.claude/skills/gstack/bin/gstack-update-check 2>/dev/null || .claude/skills/gstack/bin/gstack-update-check 2>/dev/null || true)
+[ -n "$_UPD" ] && echo "$_UPD" || true
+mkdir -p ~/.gstack/sessions
+touch ~/.gstack/sessions/"$PPID"
+_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+_TEL_START=$(date +%s)
+_SESSION_ID="$$-$(date +%s)"
+echo "BRANCH: $_BRANCH"
+mkdir -p ~/.gstack/analytics
+echo '{"skill":"cuda-review","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","repo":"'$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")'"}' >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
+```
+
+## Review Priorities
+
+Order findings by severity:
+
+1. wrong physics or discretization
+2. memory safety and races
+3. silent numerical corruption
+4. convergence or stability regressions
+5. performance cliffs
+6. missing verification or benchmark evidence
+
+## Look For
+
+- off-by-one grid or thread indexing
+- invalid accesses at boundaries
+- stale ghost or halo values
+- wrong sign conventions
+- inconsistent units or scaling
+- broken symmetry or conservation
+- misuse of atomics
+- shared-memory aliasing
+- warp divergence in hot kernels
+- accidental host-device copies in hot paths
+- tolerance changes without justification
+- benchmark claims without fixed input and hardware notes
+
+## If Context Is Missing
+
+Ask for:
+- governing equations or model statement
+- expected invariants
+- build command
+- smallest verification case
+- representative benchmark case
+
+## Output Standard
+
+Findings first, open questions second, brief summary last.
+
+## Completion Status Protocol
+
+Use one of:
+- DONE
+- DONE_WITH_CONCERNS
+- BLOCKED
+- NEEDS_CONTEXT
+
+## Telemetry (run last)
+
+```bash
+_TEL_END=$(date +%s)
+_TEL_DUR=$(( _TEL_END - _TEL_START ))
+~/.claude/skills/gstack/bin/gstack-telemetry-log \
+  --skill "cuda-review" --duration "$_TEL_DUR" --outcome "success" \
+  --used-browse "false" --session-id "$_SESSION_ID" 2>/dev/null &
+```

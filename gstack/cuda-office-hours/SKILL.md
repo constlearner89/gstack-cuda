@@ -1,0 +1,112 @@
+---
+name: cuda-office-hours
+version: 1.0.0
+description: |
+  CUDA/C++ numerical R&D office hours. Reframes solver ideas into the
+  narrowest high-value wedge, compares implementation paths, and defines
+  evidence required before coding. Use when asked to brainstorm a solver
+  idea, evaluate whether a numerical feature is worth building, or think
+  through DEM/SPH/FVM/FEM roadmap decisions.
+allowed-tools:
+  - Bash
+  - Read
+  - Grep
+  - Glob
+  - Write
+  - Edit
+  - AskUserQuestion
+  - WebSearch
+---
+<!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
+<!-- Regenerate: bun run gen:skill-docs -->
+
+## Preamble (run first)
+
+```bash
+_UPD=$(~/.claude/skills/gstack/bin/gstack-update-check 2>/dev/null || .claude/skills/gstack/bin/gstack-update-check 2>/dev/null || true)
+[ -n "$_UPD" ] && echo "$_UPD" || true
+mkdir -p ~/.gstack/sessions
+touch ~/.gstack/sessions/"$PPID"
+_SESSIONS=$(find ~/.gstack/sessions -mmin -120 -type f 2>/dev/null | wc -l | tr -d ' ')
+find ~/.gstack/sessions -mmin +120 -type f -delete 2>/dev/null || true
+_CONTRIB=$(~/.claude/skills/gstack/bin/gstack-config get gstack_contributor 2>/dev/null || true)
+_PROACTIVE=$(~/.claude/skills/gstack/bin/gstack-config get proactive 2>/dev/null || echo "true")
+_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+echo "BRANCH: $_BRANCH"
+echo "PROACTIVE: $_PROACTIVE"
+_LAKE_SEEN=$([ -f ~/.gstack/.completeness-intro-seen ] && echo "yes" || echo "no")
+echo "LAKE_INTRO: $_LAKE_SEEN"
+_TEL=$(~/.claude/skills/gstack/bin/gstack-config get telemetry 2>/dev/null || true)
+_TEL_PROMPTED=$([ -f ~/.gstack/.telemetry-prompted ] && echo "yes" || echo "no")
+_TEL_START=$(date +%s)
+_SESSION_ID="$$-$(date +%s)"
+echo "TELEMETRY: ${_TEL:-off}"
+echo "TEL_PROMPTED: $_TEL_PROMPTED"
+mkdir -p ~/.gstack/analytics
+echo '{"skill":"cuda-office-hours","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","repo":"'$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")'"}' >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
+```
+
+If `PROACTIVE` is `false`, do not proactively suggest unrelated gstack skills.
+
+## AskUserQuestion Format
+
+For every question:
+1. Re-ground in the current repo, branch, and current solver task.
+2. Explain the tradeoff in plain language.
+3. Recommend one option and say why.
+4. Show lettered options with both human-team and CC+gstack effort when effort matters.
+
+## CUDA Office Hours Flow
+
+Work through these questions before implementation:
+
+1. What exact limitation, wrong result, instability, or runtime cost exists in the current solver?
+2. What is the narrowest change that could produce measurable value?
+3. Is the expected gain accuracy, stability, robustness, runtime, memory, or maintainability?
+4. What is the cheapest benchmark or verification case that can falsify the idea?
+5. If the idea works, what larger roadmap does it unlock?
+
+Prefer ideas that satisfy at least one of these:
+
+- fixes a known wrong result
+- removes a stability bottleneck
+- reduces runtime or memory on a representative case
+- makes validation materially easier
+- unlocks a capability that users or downstream solvers actually need
+
+Be skeptical of ideas that are only:
+
+- mathematically interesting but operationally unvalidated
+- broad rewrites without a benchmark wedge
+- architecture churn without physics or runtime payoff
+- optimizations without a proven hotspot
+
+## Output
+
+Produce:
+
+- problem statement
+- current status quo and pain
+- narrowest viable wedge
+- 2-3 implementation options
+- recommendation
+- acceptance evidence required before calling it successful
+- next coding step
+
+## Completion Status Protocol
+
+Use one of:
+- DONE
+- DONE_WITH_CONCERNS
+- BLOCKED
+- NEEDS_CONTEXT
+
+## Telemetry (run last)
+
+```bash
+_TEL_END=$(date +%s)
+_TEL_DUR=$(( _TEL_END - _TEL_START ))
+~/.claude/skills/gstack/bin/gstack-telemetry-log \
+  --skill "cuda-office-hours" --duration "$_TEL_DUR" --outcome "success" \
+  --used-browse "false" --session-id "$_SESSION_ID" 2>/dev/null &
+```

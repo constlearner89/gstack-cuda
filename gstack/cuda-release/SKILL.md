@@ -1,0 +1,58 @@
+---
+name: cuda-release
+version: 1.0.0
+description: |
+  Release discipline for CUDA/C++ solver repositories. Requires build success,
+  verification evidence, and representative benchmark data for hot-path
+  changes before calling work shipped.
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Grep
+  - Glob
+  - AskUserQuestion
+---
+<!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
+<!-- Regenerate: bun run gen:skill-docs -->
+
+## Preamble (run first)
+
+```bash
+mkdir -p ~/.gstack/sessions
+touch ~/.gstack/sessions/"$PPID"
+_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+_TEL_START=$(date +%s)
+_SESSION_ID="$$-$(date +%s)"
+echo "BRANCH: $_BRANCH"
+```
+
+## Release Gate
+
+Do not call the change shipped unless you can state:
+
+- what changed physically or numerically
+- what case was used to verify it
+- what tolerance or success criterion was applied
+- whether runtime changed on a representative workload
+
+## Release Notes Should Mention
+
+- physics or model changes
+- discretization changes
+- solver or preconditioner changes
+- default parameter changes
+- expected accuracy impact
+- expected runtime impact
+- backward compatibility concerns
+
+## Telemetry (run last)
+
+```bash
+_TEL_END=$(date +%s)
+_TEL_DUR=$(( _TEL_END - _TEL_START ))
+~/.claude/skills/gstack/bin/gstack-telemetry-log \
+  --skill "cuda-release" --duration "$_TEL_DUR" --outcome "success" \
+  --used-browse "false" --session-id "$_SESSION_ID" 2>/dev/null &
+```
