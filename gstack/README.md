@@ -72,11 +72,11 @@ Expect first useful run in under 5 minutes on any repo with builds and test case
 
 Open Claude Code and paste this. Claude does the rest.
 
-> Install gstack: run **`git clone https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`** then add a "gstack" section to CLAUDE.md that says to use the /browse skill from gstack for all web browsing, never use mcp\_\_claude-in-chrome\_\_\* tools, and lists the available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /retro, /investigate, /document-release, /codex, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade. Then ask the user if they also want to add gstack to the current project so teammates get it.
+> Install gstack-cuda: run **`git clone <this-fork-url> ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`** then add a "gstack" section to CLAUDE.md that says CUDA and numerical-simulation work should prefer the CUDA skills (`/cuda-office-hours`, `/cuda-plan-eng-review`, `/cuda-dev`, `/cuda-investigate`, `/cuda-review`, `/cuda-benchmark`, `/cuda-verify`, `/cuda-release`), keep the original gstack skills available as fallback workflows, use the /browse skill from gstack for web browsing when needed, and tells Claude that if gstack skills aren't working, run `cd ~/.claude/skills/gstack && ./setup` to build the binary and register skills. Replace `<this-fork-url>` with the Git URL of this fork.
 
 ### Step 2: Add to your repo so teammates get it (optional)
 
-> Add gstack to this project: run **`cp -Rf ~/.claude/skills/gstack .claude/skills/gstack && rm -rf .claude/skills/gstack/.git && cd .claude/skills/gstack && ./setup`** then add a "gstack" section to this project's CLAUDE.md that says to use the /browse skill from gstack for all web browsing, never use mcp\_\_claude-in-chrome\_\_\* tools, lists the available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /retro, /investigate, /document-release, /codex, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade, and tells Claude that if gstack skills aren't working, run `cd .claude/skills/gstack && ./setup` to build the binary and register skills.
+> Add gstack-cuda to this project: run **`cp -Rf ~/.claude/skills/gstack .claude/skills/gstack && rm -rf .claude/skills/gstack/.git && cd .claude/skills/gstack && ./setup`** then add a "gstack" section to this project's CLAUDE.md that says CUDA and numerical-simulation work should prefer the CUDA skills (`/cuda-office-hours`, `/cuda-plan-eng-review`, `/cuda-dev`, `/cuda-investigate`, `/cuda-review`, `/cuda-benchmark`, `/cuda-verify`, `/cuda-release`), keep the original gstack skills as fallback workflows, use the /browse skill from gstack for web browsing when needed, and tells Claude that if gstack skills aren't working, run `cd .claude/skills/gstack && ./setup` to build the binary and register skills.
 
 Real files get committed to your repo (not a submodule), so `git clone` just works. Everything lives inside `.claude/`. Nothing touches your PATH or runs in the background.
 
@@ -85,18 +85,18 @@ Real files get committed to your repo (not a submodule), so `git clone` just wor
 gstack works on any agent that supports the [SKILL.md standard](https://github.com/anthropics/claude-code). Skills live in `.agents/skills/` and are discovered automatically.
 
 ```bash
-git clone https://github.com/garrytan/gstack.git ~/.codex/skills/gstack
+git clone <this-fork-url> ~/.codex/skills/gstack
 cd ~/.codex/skills/gstack && ./setup --host codex
 ```
 
 Or let setup auto-detect which agents you have installed:
 
 ```bash
-git clone https://github.com/garrytan/gstack.git ~/gstack
+git clone <this-fork-url> ~/gstack
 cd ~/gstack && ./setup --host auto
 ```
 
-This installs to `~/.claude/skills/gstack` and/or `~/.codex/skills/gstack` depending on what's available. All 25 skills work across all supported agents. Hook-based safety skills (careful, freeze, guard) use inline safety advisory prose on non-Claude hosts.
+Replace `<this-fork-url>` with the Git URL of this fork. This installs to `~/.claude/skills/gstack` and/or `~/.codex/skills/gstack` depending on what's available. The full gstack workflow plus the CUDA extension skills work across supported agents. Hook-based safety skills (`careful`, `freeze`, `guard`) use inline safety advisory prose on non-Claude hosts.
 
 ## See it work
 

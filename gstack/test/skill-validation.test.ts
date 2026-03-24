@@ -1337,6 +1337,8 @@ describe('Skill trigger phrases', () => {
     'plan-ceo-review', 'plan-eng-review', 'plan-design-review',
     'design-review', 'design-consultation', 'retro', 'document-release',
     'codex', 'browse', 'setup-browser-cookies',
+    'cuda-office-hours', 'cuda-plan-eng-review', 'cuda-dev', 'cuda-investigate',
+    'cuda-review', 'cuda-benchmark', 'cuda-verify', 'cuda-release',
   ];
 
   for (const skill of SKILLS_REQUIRING_TRIGGERS) {

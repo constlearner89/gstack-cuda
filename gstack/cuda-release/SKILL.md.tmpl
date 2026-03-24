@@ -4,7 +4,8 @@ version: 1.0.0
 description: |
   Release discipline for CUDA/C++ solver repositories. Requires build success,
   verification evidence, and representative benchmark data for hot-path
-  changes before calling work shipped.
+  changes before calling work shipped. Use when asked to release, ship, or
+  sign off solver changes.
 allowed-tools:
   - Bash
   - Read

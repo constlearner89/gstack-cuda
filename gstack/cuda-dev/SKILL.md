@@ -4,7 +4,8 @@ version: 1.0.0
 description: |
   Default implementation workflow for CUDA/C++ numerical simulation projects.
   Emphasizes mathematical correctness, memory safety, numerical stability,
-  targeted verification, and explicit benchmark evidence.
+  targeted verification, and explicit benchmark evidence. Use when asked to
+  implement or modify CUDA/C++ numerical code.
 allowed-tools:
   - Bash
   - Read

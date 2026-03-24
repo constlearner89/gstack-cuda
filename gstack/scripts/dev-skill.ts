@@ -13,10 +13,28 @@ import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
 
-const TEMPLATES = [
-  { tmpl: path.join(ROOT, 'SKILL.md.tmpl'), output: 'SKILL.md' },
-  { tmpl: path.join(ROOT, 'browse', 'SKILL.md.tmpl'), output: 'browse/SKILL.md' },
-];
+function findTemplates(): Array<{ tmpl: string; output: string }> {
+  const templates: Array<{ tmpl: string; output: string }> = [];
+  const rootTemplate = path.join(ROOT, 'SKILL.md.tmpl');
+  if (fs.existsSync(rootTemplate)) {
+    templates.push({ tmpl: rootTemplate, output: 'SKILL.md' });
+  }
+
+  for (const entry of fs.readdirSync(ROOT, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+    const tmplPath = path.join(ROOT, entry.name, 'SKILL.md.tmpl');
+    if (fs.existsSync(tmplPath)) {
+      templates.push({
+        tmpl: tmplPath,
+        output: path.join(entry.name, 'SKILL.md'),
+      });
+    }
+  }
+
+  return templates.sort((a, b) => a.output.localeCompare(b.output));
+}
+
+const TEMPLATES = findTemplates();
 
 function regenerateAndValidate() {
   // Regenerate

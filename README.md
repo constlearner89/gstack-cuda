@@ -2,6 +2,11 @@
 
 A CUDA/C++ numerical-simulation fork of `gstack`.
 
+This repository is an independent fork/adaptation of
+[`garrytan/gstack`](https://github.com/garrytan/gstack). It is not the
+official upstream repository and is not affiliated with or endorsed by the
+original authors.
+
 This repository vendors `gstack` and extends it with first-class skills for simulation engineering:
 
 - CUDA kernel development
@@ -31,3 +36,13 @@ This repository vendors `gstack` and extends it with first-class skills for simu
 ## Notes
 
 The vendored upstream code lives in `gstack/`. The CUDA extension is integrated into that tree in upstream-style skill directories rather than maintained as a separate overlay.
+
+## Attribution And Licensing
+
+- Upstream project: [`garrytan/gstack`](https://github.com/garrytan/gstack)
+- Vendored upstream license: [`gstack/LICENSE`](gstack/LICENSE)
+- Fork/adaptation notice: [`NOTICE.md`](NOTICE.md)
+
+This fork preserves the upstream license file and adds CUDA/simulation-oriented
+workflow, documentation, and skill integration on top of the vendored upstream
+tree.

@@ -46,13 +46,13 @@ if (evalsEnabled && !process.env.EVALS_ALL) {
 
 /** Copy all SKILL.md files into tmpDir/.claude/skills/gstack/ for auto-discovery */
 function installSkills(tmpDir: string) {
-  const skillDirs = [
-    '', // root gstack SKILL.md
-    'qa', 'qa-only', 'ship', 'review', 'plan-ceo-review', 'plan-eng-review',
-    'plan-design-review', 'design-review', 'design-consultation', 'retro',
-    'document-release', 'investigate', 'office-hours', 'browse', 'setup-browser-cookies',
-    'gstack-upgrade', 'humanizer',
-  ];
+  const skillDirs = [''];
+  for (const entry of fs.readdirSync(ROOT, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+    if (fs.existsSync(path.join(ROOT, entry.name, 'SKILL.md'))) {
+      skillDirs.push(entry.name);
+    }
+  }
 
   for (const skill of skillDirs) {
     const srcPath = path.join(ROOT, skill, 'SKILL.md');
@@ -168,6 +168,40 @@ describeE2E('Skill Routing E2E — Developer Journey', () => {
       const expectedSkill = 'plan-eng-review';
       const result = await runSkillTest({
         prompt: "I wrote up a plan for the waitlist app in plan.md. Can you take a look at the architecture and make sure I'm not missing any edge cases or failure modes before I start coding?",
+        workingDirectory: tmpDir,
+        maxTurns: 5,
+        allowedTools: ['Skill', 'Read', 'Bash', 'Glob', 'Grep'],
+        timeout: 60_000,
+        testName,
+        runId,
+      });
+
+      const skillCalls = result.toolCalls.filter(tc => tc.tool === 'Skill');
+      const actualSkill = skillCalls.length > 0 ? skillCalls[0]?.input?.skill : undefined;
+
+      logCost(`journey: ${testName}`, result);
+      recordRouting(testName, result, expectedSkill, actualSkill);
+
+      expect(skillCalls.length, `Expected Skill tool to be called but got 0 calls. Claude may have answered directly without invoking a skill. Tool calls: ${result.toolCalls.map(tc => tc.tool).join(', ')}`).toBeGreaterThan(0);
+      expect([expectedSkill], `Expected skill ${expectedSkill} but got ${actualSkill}`).toContain(actualSkill);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  }, 150_000);
+
+  test.concurrent('journey-cuda-ideation', async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'routing-cuda-ideation-'));
+    try {
+      initGitRepo(tmpDir);
+      installSkills(tmpDir);
+      fs.writeFileSync(path.join(tmpDir, 'README.md'), '# DEM Solver\n');
+      spawnSync('git', ['add', '.'], { cwd: tmpDir, stdio: 'pipe', timeout: 5000 });
+      spawnSync('git', ['commit', '-m', 'initial'], { cwd: tmpDir, stdio: 'pipe', timeout: 5000 });
+
+      const testName = 'journey-cuda-ideation';
+      const expectedSkill = 'cuda-office-hours';
+      const result = await runSkillTest({
+        prompt: "I'm working on a CUDA DEM solver and contact handling is becoming the bottleneck. I'm considering a cell-list redesign and maybe changing the contact model, but I want to narrow this to the smallest experiment that could improve stability or runtime. Help me think through whether this is worth building first.",
         workingDirectory: tmpDir,
         maxTurns: 5,
         allowedTools: ['Skill', 'Read', 'Bash', 'Glob', 'Grep'],
